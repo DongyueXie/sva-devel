@@ -4,10 +4,8 @@
 \alias{qsva}
 \title{A function for computing quality surrogate variables (qSVs)}
 \usage{
-qsva(
-  degradationMatrix,
-  mod = matrix(1, ncol = 1, nrow = ncol(degradationMatrix))
-)
+qsva(degradationMatrix, mod = matrix(1, ncol = 1, nrow =
+  ncol(degradationMatrix)))
 }
 \arguments{
 \item{degradationMatrix}{the normalized degradation matrix, region by sample}

@@ -1,0 +1,46 @@
+% \VignetteIndexEntry{sva tutorial}
+% \VignetteKeywords{Gene expression data, RNA-seq, batch effects}
+% \VignettePackage{sva}
+\documentclass[12pt]{article}
+\RequirePackage[]{/Library/Frameworks/R.framework/Versions/3.6/Resources/library/BiocStyle/resources/tex/Bioconductor}
+\AtBeginDocument{\bibliographystyle{/Library/Frameworks/R.framework/Versions/3.6/Resources/library/BiocStyle/resources/tex/unsrturl}}
+\usepackage[noae, nogin]{Sweave}
+
+
+
+\usepackage{Sweave}
+\begin{document} 
+\input{sva-concordance}
+\title{The SVA package for removing batch effects and other unwanted variation in high-throughput experiments}
+\author{Jeffrey Leek$^1$*, W. Evan Johnson$^2$, Andrew Jaffe$^1$, Hilary Parker$^1$, John Storey$^3$ \\
+$^1$Johns Hopkins Bloomberg School of Public Health \\
+$^2$Boston University\\
+$^3$Princeton University\\
+*email: \texttt{jleek@jhsph.edu}}
+\date{Modified: October 24, 2011  Compiled: \today}
+\maketitle
+
+\tableofcontents
+
+\section{Overview}
+
+The \Rpackage{sva} package contains functions for removing batch effects and other unwanted variation in high-throughput experiments. Specifically, the \Rpackage{sva} package contains functions for identifying and building surrogate variables for high-dimensional data sets. Surrogate variables are covariates constructed directly from high-dimensional data (like gene expression/RNA sequencing/methylation/brain imaging data) that can be used in subsequent analyses to adjust for unknown, unmodeled, or latent sources of noise. 
+
+The \Rpackage{sva} package can be used to remove artifacts in two ways: (1) identifying and estimating surrogate variables for unknown sources of variation in high-throughput experiments and (2) directly removing known batch effects using ComBat \cite{johnson:2007aa}. 
+
+Leek et. al (2010) define batch effects as follows: 
+\begin{quote}
+Batch effects are sub-groups of measurements that have qualitatively different behaviour across conditions and are unrelated to the biological or scientific variables in a study. For example, batch effects may occur if a subset of experiments was run on Monday and another set on Tuesday, if two technicians were responsible for different subsets of the experiments, or if two different lots of reagents, chips or instruments were used.
+\end{quote}
+The \Rpackage{sva} package includes the popular ComBat \cite{johnson:2007aa} function for directly modeling batch effects when they are known. There are also potentially a large number of environmental and biological variables that are unmeasured and may have a large impact on measurements from high-throughput biological experiments. For these cases the \Rfunction{sva} function may be more appropriate for removing these artifacts. It is also possible to use the \Rfunction{sva} function with the \Rfunction{ComBat} function to remove both known batch effects and other potential latent sources of variation. Removing batch effects and using surrogate variables in differential expression analysis have been shown to reduce dependence, stabilize error rate estimates, and improve reproducibility (see \cite{leek:storey:2007,leek:storey:2008,leek:2010aa} for more detailed information).
+
+This document provides a tutorial for using the \Rpackage{sva} package. The tutorial includes information on (1) how to estimate the number of latent sources of variation, (2) how to apply the\Rpackage{sva} package to estimate latent variables such as batch effects, (3) how to directly remove known batch effects using the \Rfunction{ComBat} function, (4) how to perform differential expression analysis using surrogate variables either directly or with the\Rpackage{limma} package, and (4) how to apply ``frozen'' \Rfunction{sva} to improve prediction and clustering.  
+
+As with any R package, detailed information on functions, along with their arguments and values, can be obtained in the help files. For instance, to view the help file for the function \Rfunction{sva} within R, type \texttt{?sva}.  The analyses performed in this experiment are based on gene expression measurements from a bladder cancer study \cite{dyrskjot:2004aa}. The data can be loaded from the \Rpackage{bladderbatch} data package. The relevant packages for the Vignette can be loaded with the code:
+
+\begin{Schunk}
+\begin{Sinput}
+> library(sva)
+> library(bladderbatch)
+> data(bladderdata)
+> library(pamr)
